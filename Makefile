@@ -25,10 +25,6 @@ requirements: test_environment
 	$(PYTHON_INTERPRETER) -m pip install -U pip setuptools wheel
 	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt
 
-## Make Dataset
-data: requirements
-	$(PYTHON_INTERPRETER) src/data/make_dataset.py data/raw data/processed
-
 ## Delete all compiled Python files
 clean:
 	find . -type f -name "*.py[co]" -delete
@@ -37,6 +33,9 @@ clean:
 ## Lint using flake8
 lint:
 	flake8 src
+
+download_data:
+	$(PYTHON_INTERPRETER) src/data/download_data.py data/raw
 
 ## Upload Data to S3
 sync_data_to_s3:
