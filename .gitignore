@@ -76,7 +76,10 @@ target/
 .ipynb_checkpoints/
 
 # exclude data from source control by default
-/data/
+/data/mvs_dataset
+/data/ShapeNet/ShapeNetVox32
+/data/ShapeNet/ShapeNetRendering
+
 
 # Mac OS-specific storage files
 .DS_Store

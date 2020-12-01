@@ -42,7 +42,7 @@ __C.CONST.DEVICE                            = '0'
 __C.CONST.RNG_SEED                          = 0
 __C.CONST.IMG_W                             = 224       # Image width for input
 __C.CONST.IMG_H                             = 224       # Image height for input
-__C.CONST.BATCH_SIZE                        = 64
+__C.CONST.BATCH_SIZE                        = 32
 __C.CONST.N_VIEWS_RENDERING                 = 1         # Dummy property for Pascal 3D
 __C.CONST.CROP_IMG_W                        = 128       # Dummy property for Pascal 3D
 __C.CONST.CROP_IMG_H                        = 128       # Dummy property for Pascal 3D
@@ -52,7 +52,7 @@ __C.CONST.NUM_WORKER                        = 4         # number of data workers
 # Directories
 #
 __C.DIR                                     = edict()
-__C.DIR.OUT_PATH                            = './output'
+__C.DIR.OUT_PATH                            = 'output'
 __C.DIR.RANDOM_BG_PATH                      = '/home/hzxie/Datasets/SUN2012/JPEGImages'
 
 #

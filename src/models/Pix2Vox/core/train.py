@@ -168,7 +168,7 @@ def train_net(cfg, model_type):
                      (init_epoch, best_iou, best_epoch))
 
     # Summary writer for TensorBoard
-    output_dir = os.path.join(cfg.DIR.OUT_PATH, '%s', dt.now().isoformat())
+    output_dir = os.path.join(cfg.DIR.OUT_PATH, '%s')
     cfg.DIR.LOGS = output_dir % 'logs'
     cfg.DIR.CHECKPOINTS = output_dir % 'checkpoints'
     train_writer = SummaryWriter(os.path.join(cfg.DIR.LOGS, 'train'))
