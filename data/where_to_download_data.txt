@@ -11,6 +11,7 @@ How to configure folders:
 /data/mvs_dataset/sample_set - http://roboimagedata2.compute.dtu.dk/data/MVS/SampleSet.zip
 /data/mvs_dataset/calibration - contains images for camera calibration (take folder from sample_set)
 
+
 /data/ShapeNet - main folder for ShapeNet dataset
 /data/ShapeNet/ShapeNetRendering - folder for images for ShapeNet
 /data/ShapeNet/ShapeNetVox32 - folder for voxel models for ShapeNet
