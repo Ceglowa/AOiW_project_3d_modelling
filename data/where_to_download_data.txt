@@ -6,7 +6,7 @@ How to configure folders:
 /data/mvs_dataset - main folder for MVS dataset
 /data/mvs_dataset/images - folders with images
 /data/mvs_dataset/images/scan<number_of_model> - folder for images for model <number_of_model>
-/data/mvs_dataset/point_clous/points_clouds - folder with points clouds for MVS - Files in this folder follow stl001_total.ply format
+/data/mvs_dataset/points_clouds - folder with points clouds for MVS - Files in this folder follow stl001_total.ply format
 
 /data/ShapeNet - main folder for ShapeNet dataset
 /data/ShapeNet/ShapeNetRendering - folder for images for ShapeNet
