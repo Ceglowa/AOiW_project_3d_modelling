@@ -1,5 +1,5 @@
 from models.model_types import Pix2VoxTypes
-from src.models.Pix2Vox.runner import main
+from runner import main
 
 if __name__ == '__main__':
     main(True, Pix2VoxTypes.Pix2Vox_Plus_Plus_A,  None)
