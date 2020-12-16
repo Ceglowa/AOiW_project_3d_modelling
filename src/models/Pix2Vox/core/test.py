@@ -23,6 +23,7 @@ from utils.average_meter import AverageMeter
 
 def test_net(cfg,
              model_type,
+             dataset_type,
              epoch_idx=-1,
              test_data_loader=None,
              test_writer=None,
@@ -58,7 +59,7 @@ def test_net(cfg,
 
         dataset_loader = utils.data_loaders.DATASET_LOADER_MAPPING[cfg.DATASET.TEST_DATASET](cfg)
         test_data_loader = torch.utils.data.DataLoader(dataset=dataset_loader.get_dataset(
-            utils.data_loaders.DatasetType.TEST, cfg.CONST.N_VIEWS_RENDERING, test_transforms),
+            dataset_type, cfg.CONST.N_VIEWS_RENDERING, test_transforms),
             batch_size=1,
             num_workers=cfg.CONST.NUM_WORKER,
             pin_memory=True,
@@ -152,12 +153,12 @@ def test_net(cfg,
             test_iou[taxonomy_id]['iou'].append(sample_iou)
 
             # Append generated volumes to TensorBoard
-            if test_writer and sample_idx < 3:
+            if test_writer and (np.mean(sample_iou) > 0.95 or np.mean(sample_iou)<0.30):
                 # Volume Visualization
                 rendering_views = utils.helpers.get_volume_views(generated_volume.cpu().numpy())
-                test_writer.add_image('Model%02d/Reconstructed' % sample_idx, rendering_views, epoch_idx)
+                test_writer.add_image(f'Model%02d/Reconstructed_Mean_IoU_{np.mean(sample_iou)}' % sample_idx, rendering_views, epoch_idx)
                 rendering_views = utils.helpers.get_volume_views(ground_truth_volume.cpu().numpy())
-                test_writer.add_image('Model%02d/GroundTruth' % sample_idx, rendering_views, epoch_idx)
+                test_writer.add_image(f'Model%02d/GroundTruth_Mean_IoU_{np.mean(sample_iou)}' % sample_idx, rendering_views, epoch_idx)
 
             # Print sample loss and IoU
             logging.info('Test[%d/%d] Taxonomy = %s Sample = %s EDLoss = %.4f RLoss = %.4f IoU = %s' %
