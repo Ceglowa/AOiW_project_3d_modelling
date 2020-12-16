@@ -7,3 +7,4 @@ mvs_dataset/images
 mvs_dataset/points_clouds
 mvs_dataset/sample_set
 mvs_dataset/results
+mvs_dataset/voxels
