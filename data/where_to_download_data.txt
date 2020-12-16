@@ -1,12 +1,16 @@
 https://politechnikawroclawska-my.sharepoint.com/:u:/g/personal/237999_student_pwr_edu_pl/EcjoKIBQuZFMj3PW995Lks8B_aPFMixjCEyJo4mTzQgurw?e=7GI8Nq
 http://cvgl.stanford.edu/data2/ShapeNetRendering.tgz
 http://cvgl.stanford.edu/data2/ShapeNetVox32.tgz
+http://roboimagedata2.compute.dtu.dk/data/MVS/SampleSet.zip
 
 How to configure folders:
 /data/mvs_dataset - main folder for MVS dataset
 /data/mvs_dataset/images - folders with images
 /data/mvs_dataset/images/scan<number_of_model> - folder for images for model <number_of_model>
 /data/mvs_dataset/points_clouds - folder with points clouds for MVS - Files in this folder follow stl001_total.ply format
+/data/mvs_dataset/sample_set - http://roboimagedata2.compute.dtu.dk/data/MVS/SampleSet.zip
+/data/mvs_dataset/calibration - contains images for camera calibration (take folder from sample_set)
+
 
 /data/ShapeNet - main folder for ShapeNet dataset
 /data/ShapeNet/ShapeNetRendering - folder for images for ShapeNet
