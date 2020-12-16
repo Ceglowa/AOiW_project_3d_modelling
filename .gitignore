@@ -92,3 +92,5 @@ target/
 .mypy_cache/
 
 venv/
+output/
+runs/
