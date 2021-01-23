@@ -72,3 +72,6 @@ def view_voxel(voxel_path: str):
 def read_voxel(voxel_path: str) -> br.Voxels:
     with open(voxel_path, "rb") as f:
         return br.read_as_3d_array(f)
+
+def is_correct_scan_id(scan_id: int) -> bool:
+    return (scan_id >= 1 and scan_id <=77) or (scan_id >= 82 and scan_id <= 128)

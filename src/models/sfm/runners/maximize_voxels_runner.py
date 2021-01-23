@@ -3,7 +3,7 @@ import click
 from tqdm.auto import tqdm
 from mvs import get_mvs_result_vox_path, get_mvs_truth_vox_path
 
-from sfm_utils import get_maximized_result_vox_data, read_voxel
+from sfm_utils import get_maximized_result_vox_data, is_correct_scan_id, read_voxel
 
 @click.command()
 @click.argument("scan_id_start", type=int, required=True)
@@ -21,15 +21,17 @@ def main(scan_id_start: int, scan_id_end: int, corrected: bool):
     )
     click.echo(f"Corrected: {corrected}")
     for scan_id in tqdm(range(scan_id_start, scan_id_end + 1)):
-        truth = read_voxel(get_mvs_truth_vox_path(scan_id, corrected=corrected))
-        result = read_voxel(get_mvs_result_vox_path(scan_id, corrected=corrected))
+        if is_correct_scan_id(scan_id):
 
-        _, maximized_result_data, _ = get_maximized_result_vox_data(result.data, truth.data)
-        result_maximized = result.clone()
-        result_maximized.data = maximized_result_data
+            truth = read_voxel(get_mvs_truth_vox_path(scan_id, corrected=corrected))
+            result = read_voxel(get_mvs_result_vox_path(scan_id, corrected=corrected))
 
-        with open(get_mvs_result_vox_path(scan_id, corrected, maximized=True), "wb") as f:
-            result_maximized.write(f)
+            _, maximized_result_data, _ = get_maximized_result_vox_data(result.data, truth.data)
+            result_maximized = result.clone()
+            result_maximized.data = maximized_result_data
+
+            with open(get_mvs_result_vox_path(scan_id, corrected, maximized=True), "wb") as f:
+                result_maximized.write(f)
 
 
 
