@@ -2,7 +2,6 @@ from itertools import product
 import os
 import subprocess
 from settings import VIEWVOX_EXE
-import string
 from typing import Callable, Tuple
 from pyntcloud import PyntCloud
 import utils.binvox_rw as br
@@ -49,18 +48,20 @@ def get_maximized_result_vox_data(
     truth_vox_data: np.ndarray,
     max_shift: int = 10,
     comp_func: Callable[[np.ndarray, np.ndarray], float] = get_iou,
-) -> Tuple[float, np.ndarray]:
+) -> Tuple[float, np.ndarray, Tuple]:
     shifts = product(range(-max_shift, max_shift + 1), repeat=3)
     maximized_result_vox_data: np.ndarray = None  # type: ignore
     max_iou = 0
+    best_shift: Tuple = None  # type: ignore
     for shift in shifts:
         result_vox_shifted_data: np.ndarray = np.roll(result_vox_data, shift)  # type: ignore
         iou = comp_func(result_vox_shifted_data, truth_vox_data)
         if iou > max_iou:
             max_iou = iou
             maximized_result_vox_data = result_vox_shifted_data
+            best_shift = shift
 
-    return max_iou, maximized_result_vox_data
+    return max_iou, maximized_result_vox_data, best_shift
 
 
 def view_voxel(voxel_path: str):
