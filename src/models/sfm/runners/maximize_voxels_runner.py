@@ -17,7 +17,7 @@ from sfm_utils import get_maximized_result_vox_data, is_correct_scan_id, read_vo
 )
 def main(scan_id_start: int, scan_id_end: int, corrected: bool):
     click.echo(
-        f"\n==============MVS MAXIMIZE VOXELIZE from {scan_id_start} to {scan_id_end}==============="
+        f"\n==============MVS MAXIMIZE VOXELS from {scan_id_start} to {scan_id_end}==============="
     )
     click.echo(f"Corrected: {corrected}")
     for scan_id in tqdm(range(scan_id_start, scan_id_end + 1)):
