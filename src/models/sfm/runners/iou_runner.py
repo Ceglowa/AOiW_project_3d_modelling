@@ -28,7 +28,7 @@ def main(scan_id_start: int, scan_id_end: int, corrected: bool, maximized: bool)
     )
     click.echo(f"Corrected: {corrected}")
     click.echo(f"Maximized: {maximized}")
-    for scan_id in tqdm(range(scan_id_start, scan_id_end + 1)):
+    for scan_id in range(scan_id_start, scan_id_end + 1):
         if is_correct_scan_id(scan_id):
             result = read_voxel(get_mvs_result_vox_path(scan_id, corrected, maximized))
             truth = read_voxel(get_mvs_truth_vox_path(scan_id, corrected))
