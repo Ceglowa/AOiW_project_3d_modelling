@@ -2,8 +2,9 @@ import click
 
 from tqdm.auto import tqdm
 from mvs import get_mvs_result_vox_path, get_mvs_truth_vox_path
+import numpy as np
 
-from sfm_utils import get_iou, get_maximized_result_vox_data, is_correct_scan_id, read_voxel
+from sfm_utils import get_iou, is_correct_scan_id, read_voxel
 
 @click.command()
 @click.argument("scan_id_start", type=int, required=True)
@@ -28,13 +29,16 @@ def main(scan_id_start: int, scan_id_end: int, corrected: bool, maximized: bool)
     )
     click.echo(f"Corrected: {corrected}")
     click.echo(f"Maximized: {maximized}")
+    ious = []
     for scan_id in range(scan_id_start, scan_id_end + 1):
         if is_correct_scan_id(scan_id):
             result = read_voxel(get_mvs_result_vox_path(scan_id, corrected, maximized))
             truth = read_voxel(get_mvs_truth_vox_path(scan_id, corrected))
-            click.echo(f"IOU {scan_id}: {get_iou(result.data, truth.data)}")
-            
-
+            iou = get_iou(result.data, truth.data)
+            ious.append(iou)
+            click.echo(f"IOU {scan_id}: {iou}")
+    ious = np.array(ious)
+    click.echo(f"Mean {ious.mean():.2f}")
 
 
 if __name__ == "__main__":

@@ -37,8 +37,8 @@ def get_mvs_truth_vox_path(scan_id: int, corrected: bool):
     return os.path.join(MVS_DATASET_DIR, "voxels", f"stl{scan_id:03d}_total{'_corrected' if corrected else ''}.binvox")
 
 
-def run_mvs_reconstruction(scan_id: int):
-    command = f"docker run -v {DATA_DIR}:/data --user 0 --rm -it spedenaave/dpg pipeline.py --input /data/mvs_dataset/images/scan{scan_id} --output /data/mvs_dataset/results/sfm/scan{scan_id} --sfm-type global --flength 1920 --geomodel e --run-openmvg --run-openmvs --rmcuda --output-obj --densify-only"
+def run_mvs_reconstruction(scan_id: int, ultra: bool):
+    command = f"docker run -v {DATA_DIR}:/data --user 0 --rm -it spedenaave/dpg pipeline.py --input /data/mvs_dataset/images/scan{scan_id} --output /data/mvs_dataset/results/sfm/scan{scan_id} --sfm-type global --flength 1920 {'--dpreset ULTRA' if ultra else ''} --geomodel e --run-openmvg --run-openmvs --rmcuda --output-obj --densify-only"
     try:
         subprocess.run(command)
     except:
