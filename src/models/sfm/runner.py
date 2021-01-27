@@ -11,12 +11,12 @@ from itertools import product
 from typing import Tuple, Callable
 
 
-def plyToBinvox(input_path, output_path):
+def plyToBinvox(input_path, output_path, dim=32):
     cloud = PyntCloud.from_file(input_path)
 
     # cloud.plot(mesh=True, backend="threejs")
 
-    voxelgrid_id = cloud.add_structure("voxelgrid", n_x=32, n_y=32, n_z=32)
+    voxelgrid_id = cloud.add_structure("voxelgrid", n_x=dim, n_y=dim, n_z=dim)
     voxelgrid = cloud.structures[voxelgrid_id]
     # voxelgrid.plot(d=3, mode="density", cmap="hsv")
 
@@ -24,13 +24,13 @@ def plyToBinvox(input_path, output_path):
     y_cords = voxelgrid.voxel_y
     z_cords = voxelgrid.voxel_z
 
-    voxel = np.zeros((32, 32, 32)).astype(np.bool)
+    voxel = np.zeros((dim, dim, dim)).astype(np.bool)
 
     for x, y, z in zip(x_cords, y_cords, z_cords):
         voxel[x][y][z] = True
 
     with open(output_path, "wb") as f:
-        v = br.Voxels(voxel, (32, 32, 32), (0, 0, 0), 1, "xyz")
+        v = br.Voxels(voxel, (dim, dim, dim), (0, 0, 0), 1, "xyz")
         v.write(f)
 
     return v

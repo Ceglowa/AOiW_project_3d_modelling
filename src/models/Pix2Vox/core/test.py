@@ -19,18 +19,21 @@ from models.model_types import Pix2VoxTypes
 from models.refiner import Refiner
 from models.merger import Merger
 from utils.average_meter import AverageMeter
+from utils.results_saver import save_test_results_to_csv
 
 
 def test_net(cfg,
              model_type,
              dataset_type,
+             results_file_name,
              epoch_idx=-1,
              test_data_loader=None,
              test_writer=None,
              encoder=None,
              decoder=None,
              refiner=None,
-             merger=None):
+             merger=None,
+             save_results_to_file=False):
     if model_type == Pix2VoxTypes.Pix2Vox_A or model_type == Pix2VoxTypes.Pix2Vox_Plus_Plus_A:
         use_refiner = True
     else:
@@ -38,12 +41,6 @@ def test_net(cfg,
 
     # Enable the inbuilt cudnn auto-tuner to find the best algorithm to use
     torch.backends.cudnn.benchmark = True
-
-    # Load taxonomies of dataset
-    taxonomies = []
-    with open(cfg.DATASETS[cfg.DATASET.TEST_DATASET.upper()].TAXONOMY_FILE_PATH, encoding='utf-8') as file:
-        taxonomies = json.loads(file.read())
-    taxonomies = {t['taxonomy_id']: t for t in taxonomies}
 
     # Set up data loader
     if test_data_loader is None:
@@ -108,6 +105,13 @@ def test_net(cfg,
         refiner.eval()
     merger.eval()
 
+    samples_names = []
+    edlosses = []
+    rlosses = []
+    ious_dict = {}
+    for iou_threshold in cfg.TEST.VOXEL_THRESH:
+        ious_dict[iou_threshold] = []
+
     for sample_idx, (taxonomy_id, sample_name, rendering_images, ground_truth_volume) in enumerate(test_data_loader):
         taxonomy_id = taxonomy_id[0] if isinstance(taxonomy_id[0], str) else taxonomy_id[0].item()
         sample_name = sample_name[0]
@@ -146,6 +150,8 @@ def test_net(cfg,
                 union = torch.sum(torch.ge(_volume.add(ground_truth_volume), 1)).float()
                 sample_iou.append((intersection / union).item())
 
+                ious_dict[th].append((intersection / union).item())
+
             # IoU per taxonomy
             if taxonomy_id not in test_iou:
                 test_iou[taxonomy_id] = {'n_samples': 0, 'iou': []}
@@ -153,17 +159,27 @@ def test_net(cfg,
             test_iou[taxonomy_id]['iou'].append(sample_iou)
 
             # Append generated volumes to TensorBoard
-            if test_writer and (np.mean(sample_iou) > 0.95 or np.mean(sample_iou)<0.30):
+            if test_writer and (np.mean(sample_iou) > 0.95):
                 # Volume Visualization
                 rendering_views = utils.helpers.get_volume_views(generated_volume.cpu().numpy())
-                test_writer.add_image(f'Model%02d/Reconstructed_Mean_IoU_{np.mean(sample_iou)}' % sample_idx, rendering_views, epoch_idx)
+                test_writer.add_image(f'Model%02d/Reconstructed_Mean_IoU_{np.mean(sample_iou)}' % sample_idx,
+                                      rendering_views, epoch_idx)
                 rendering_views = utils.helpers.get_volume_views(ground_truth_volume.cpu().numpy())
-                test_writer.add_image(f'Model%02d/GroundTruth_Mean_IoU_{np.mean(sample_iou)}' % sample_idx, rendering_views, epoch_idx)
+                test_writer.add_image(f'Model%02d/GroundTruth_Mean_IoU_{np.mean(sample_iou)}' % sample_idx,
+                                      rendering_views, epoch_idx)
 
             # Print sample loss and IoU
             logging.info('Test[%d/%d] Taxonomy = %s Sample = %s EDLoss = %.4f RLoss = %.4f IoU = %s' %
                          (sample_idx + 1, n_samples, taxonomy_id, sample_name, encoder_loss.item(),
                           refiner_loss.item(), ['%.4f' % si for si in sample_iou]))
+
+            samples_names.append(sample_name)
+            edlosses.append(encoder_loss.item())
+            if use_refiner:
+                rlosses.append(refiner_loss.item())
+
+    if save_results_to_file:
+        save_test_results_to_csv(samples_names, edlosses, rlosses, ious_dict, path_to_csv=results_file_name)
 
     # Output testing results
     mean_iou = []
@@ -180,18 +196,6 @@ def test_net(cfg,
     for th in cfg.TEST.VOXEL_THRESH:
         print('t=%.2f' % th, end='\t')
     print()
-    # Print body
-    for taxonomy_id in test_iou:
-        print('%s' % taxonomies[taxonomy_id]['taxonomy_name'].ljust(8), end='\t')
-        print('%d' % test_iou[taxonomy_id]['n_samples'], end='\t')
-        if 'baseline' in taxonomies[taxonomy_id]:
-            print('%.4f' % taxonomies[taxonomy_id]['baseline']['%d-view' % cfg.CONST.N_VIEWS_RENDERING], end='\t\t')
-        else:
-            print('N/a', end='\t\t')
-
-        for ti in test_iou[taxonomy_id]['iou']:
-            print('%.4f' % ti, end='\t')
-        print()
     # Print mean IoU for each threshold
     print('Overall ', end='\t\t\t\t')
     for mi in mean_iou:
@@ -207,4 +211,3 @@ def test_net(cfg,
             test_writer.add_scalar('Refiner/IoU', max_iou, epoch_idx)
 
     return max_iou
-
