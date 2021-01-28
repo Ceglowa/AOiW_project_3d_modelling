@@ -18,7 +18,8 @@ from utils.data_loaders import DatasetType
 
 
 def test_model(model_type, test_dataset: str, batch_size: int,
-               mvs_taxonomy_file: str, results_file_name: str, weights_path=None, dataset_type=DatasetType.TEST, n_views: int = 1, ):
+               mvs_taxonomy_file: str, results_file_name=None, weights_path=None, dataset_type=DatasetType.TEST,
+               n_views: int = 1, save_results_to_file: bool = True, show_voxels: bool=False, path_to_times_csv=None):
     logging.basicConfig(format='[%(levelname)s] %(asctime)s %(message)s', level=logging.DEBUG)
 
     cfg.DATASET.TEST_DATASET = test_dataset
@@ -34,7 +35,8 @@ def test_model(model_type, test_dataset: str, batch_size: int,
         cfg.CONST.WEIGHTS = weights_path
 
     if 'WEIGHTS' in cfg.CONST and os.path.exists(cfg.CONST.WEIGHTS):
-        test_net(cfg, model_type, dataset_type, test_writer=SummaryWriter(), save_results_to_file=True, results_file_name=results_file_name)
+        test_net(cfg, model_type, dataset_type, test_writer=SummaryWriter(), save_results_to_file=save_results_to_file,
+                 results_file_name=results_file_name, show_voxels=show_voxels, path_to_times_csv=path_to_times_csv)
     else:
         logging.error('Please specify the file path of checkpoint.')
         sys.exit(2)

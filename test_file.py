@@ -68,6 +68,19 @@ def test_models():
             test_model(model_type,"MVS", 8, mvs_train_taxonomy_path, weights_path=weights_path, n_views=n_view, results_file_name = f"reports/results/MVS_{model_name}_{n_view}.csv")
 
 
+def show_best_voxels():
+    test_model(Pix2VoxTypes.Pix2Vox_A, "MVS", 8, "data/mvs_dataset/MVS_taxonomy_best.json",
+               weights_path="output/checkpoints_Pix2VoxTypes.Pix2Vox_A_Mixed_10/checkpoint-best.pth",
+               n_views=30, save_results_to_file=False, show_voxels=True)
+
+def test_show_times():
+    for n_views in [1,5,10,15,20,25,30,35,40]:
+        test_model(Pix2VoxTypes.Pix2Vox_A, "MVS", 8, "data/mvs_dataset/MVS_taxonomy.json",
+                   weights_path="output/checkpoints_Pix2VoxTypes.Pix2Vox_A_Mixed_10/checkpoint-best.pth",
+                   n_views=n_views, save_results_to_file=False, show_voxels=False,path_to_times_csv=f"reports/results/MVS_time_processing_n_views_{n_views}.csv")
+
 if __name__ == '__main__':
-    train_models()
-    test_models()
+    # train_models()
+    # test_models()
+    # show_best_voxels()
+    test_show_times()
