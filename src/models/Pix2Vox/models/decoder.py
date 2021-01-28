@@ -56,12 +56,14 @@ class Decoder(torch.nn.Module):
     def init_pix2vox_a(self):
         # Layer Definition
         self.layer1 = torch.nn.Sequential(
-            torch.nn.ConvTranspose3d(2048, 512, kernel_size=4, stride=2, bias=self.cfg.NETWORK.TCONV_USE_BIAS, padding=1),
+            torch.nn.ConvTranspose3d(2048, 512, kernel_size=4, stride=2, bias=self.cfg.NETWORK.TCONV_USE_BIAS,
+                                     padding=1),
             torch.nn.BatchNorm3d(512),
             torch.nn.ReLU()
         )
         self.layer2 = torch.nn.Sequential(
-            torch.nn.ConvTranspose3d(512, 128, kernel_size=4, stride=2, bias=self.cfg.NETWORK.TCONV_USE_BIAS, padding=1),
+            torch.nn.ConvTranspose3d(512, 128, kernel_size=4, stride=2, bias=self.cfg.NETWORK.TCONV_USE_BIAS,
+                                     padding=1),
             torch.nn.BatchNorm3d(128),
             torch.nn.ReLU()
         )
@@ -79,7 +81,6 @@ class Decoder(torch.nn.Module):
             torch.nn.ConvTranspose3d(8, 1, kernel_size=1, bias=self.cfg.NETWORK.TCONV_USE_BIAS),
             torch.nn.Sigmoid()
         )
-
 
     def init_pix2vox_plus_plus_a(self):
         # Layer Definition
@@ -113,7 +114,8 @@ class Decoder(torch.nn.Module):
     def init_pix2vox_plus_plus_f(self):
         # Layer Definition
         self.layer1 = torch.nn.Sequential(
-            torch.nn.ConvTranspose3d(392, 128, kernel_size=4, stride=2, bias=self.cfg.NETWORK.TCONV_USE_BIAS, padding=1),
+            torch.nn.ConvTranspose3d(392, 128, kernel_size=4, stride=2, bias=self.cfg.NETWORK.TCONV_USE_BIAS,
+                                     padding=1),
             torch.nn.BatchNorm3d(128),
             torch.nn.ReLU()
         )
@@ -263,4 +265,3 @@ class Decoder(torch.nn.Module):
         # print(gen_volumes.size())      # torch.Size([batch_size, n_views, 32, 32, 32])
         # print(raw_features.size())      # torch.Size([batch_size, n_views, 9, 32, 32, 32])
         return raw_features, gen_volumes
-

@@ -7,19 +7,17 @@ import logging
 import os
 import sys
 
-from pprint import pprint
-
 from tensorboardX import SummaryWriter
 
 from config import cfg
-from core.train import train_net
 from core.test import test_net
+from core.train import train_net
 from utils.data_loaders import DatasetType
 
 
 def test_model(model_type, test_dataset: str, batch_size: int,
                mvs_taxonomy_file: str, results_file_name=None, weights_path=None, dataset_type=DatasetType.TEST,
-               n_views: int = 1, save_results_to_file: bool = True, show_voxels: bool=False, path_to_times_csv=None):
+               n_views: int = 1, save_results_to_file: bool = True, show_voxels: bool = False, path_to_times_csv=None):
     logging.basicConfig(format='[%(levelname)s] %(asctime)s %(message)s', level=logging.DEBUG)
 
     cfg.DATASET.TEST_DATASET = test_dataset

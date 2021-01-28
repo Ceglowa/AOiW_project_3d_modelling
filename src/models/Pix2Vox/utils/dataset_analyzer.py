@@ -3,14 +3,14 @@
 #
 # Developed by Haozhe Xie <cshzxie@gmail.com>
 
-import numpy as np
 import os
-import scipy.ndimage
 import sys
-
 from datetime import datetime as dt
 from fnmatch import fnmatch
 from queue import Queue
+
+import numpy as np
+import scipy.ndimage
 
 
 def main():

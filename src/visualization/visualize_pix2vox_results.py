@@ -1,8 +1,9 @@
-import seaborn as sns
-import pandas as pd
 import os
 from typing import List, Tuple
+
 import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
 
 t_list = ['0.2', '0.3', '0.4', '0.5']
 path_to_plots = "../../reports/figures/pix2vox_plots"

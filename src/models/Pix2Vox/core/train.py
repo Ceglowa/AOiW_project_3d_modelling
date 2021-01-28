@@ -2,27 +2,26 @@
 #
 # Developed by Haozhe Xie <cshzxie@gmail.com>
 
-import os
 import logging
+import os
 import random
+from datetime import datetime as dt
+from time import time
+
 import torch
 import torch.backends.cudnn
 import torch.utils.data
+from tensorboardX import SummaryWriter
 
 import utils.data_loaders
 import utils.data_transforms
 import utils.helpers
-
-from datetime import datetime as dt
-from tensorboardX import SummaryWriter
-from time import time
-
 from core.test import test_net
-from models.encoder import Encoder
 from models.decoder import Decoder
+from models.encoder import Encoder
+from models.merger import Merger
 from models.model_types import Pix2VoxTypes
 from models.refiner import Refiner
-from models.merger import Merger
 from utils.average_meter import AverageMeter
 from utils.data_loaders import DatasetType
 
@@ -280,7 +279,6 @@ def train_net(cfg, model_type):
             logging.info('[Epoch %d/%d] EpochTime = %.3f (s) EDLoss = %.4f' %
                          (epoch_idx + 1, cfg.TRAIN.NUM_EPOCHS, epoch_end_time - epoch_start_time, encoder_losses.avg))
 
-
         # Update Rendering Views
         if cfg.TRAIN.UPDATE_N_VIEWS_RENDERING:
             n_views_rendering = random.randint(1, cfg.CONST.N_VIEWS_RENDERING)
@@ -290,9 +288,11 @@ def train_net(cfg, model_type):
 
         # Validate the training models
         if use_refiner:
-            iou = test_net(cfg, model_type, DatasetType.VAL, epoch_idx + 1, val_data_loader, val_writer, encoder, decoder, refiner, merger)
+            iou = test_net(cfg, model_type, DatasetType.VAL, epoch_idx + 1, val_data_loader, val_writer, encoder,
+                           decoder, refiner, merger)
         else:
-            iou = test_net(cfg, model_type, DatasetType.VAL, epoch_idx + 1, val_data_loader, val_writer, encoder, decoder, refiner=None,
+            iou = test_net(cfg, model_type, DatasetType.VAL, epoch_idx + 1, val_data_loader, val_writer, encoder,
+                           decoder, refiner=None,
                            merger=merger)
         # Save weights to file
         if (epoch_idx + 1) % cfg.TRAIN.SAVE_FREQ == 0 or iou > best_iou:

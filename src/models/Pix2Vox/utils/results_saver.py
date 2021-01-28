@@ -16,7 +16,5 @@ def save_test_results_to_csv(samples_names, edlosses, rlosses, ious_dict, path_t
 
 def save_times_to_csv(times, n_views_list, path_to_csv):
     df = pd.DataFrame(data={"time": times,
-                       "n_views": n_views_list})
-
-    file_name = path_to_csv.split(os.path.sep)
+                            "n_views": n_views_list})
     df.to_csv(path_to_csv, index=False)

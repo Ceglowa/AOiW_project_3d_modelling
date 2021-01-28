@@ -2,18 +2,18 @@
 #
 # Developed by Haozhe Xie <cshzxie@gmail.com>
 
-from PIL import Image
 import json
-import numpy as np
 import logging
 import os
 import random
+import sys
+from enum import Enum, unique
+
+import numpy as np
 import scipy.io
 import scipy.ndimage
-import sys
 import torch.utils.data.dataset
-
-from enum import Enum, unique
+from PIL import Image
 
 import utils.binvox_rw
 
@@ -30,6 +30,7 @@ class DatasetType(Enum):
 
 class ShapeNetDataset(torch.utils.data.dataset.Dataset):
     """ShapeNetDataset class used for PyTorch DataLoader"""
+
     def __init__(self, dataset_type, file_list, n_views_rendering, transforms=None):
         self.dataset_type = dataset_type
         self.file_list = file_list
@@ -67,7 +68,7 @@ class ShapeNetDataset(torch.utils.data.dataset.Dataset):
 
         rendering_images = []
         for image_path in selected_rendering_image_paths:
-            rendering_image= np.asarray(Image.open(image_path)).astype(np.float32) / 255.
+            rendering_image = np.asarray(Image.open(image_path)).astype(np.float32) / 255.
             if len(rendering_image.shape) < 3:
                 logging.error('It seems that there is something wrong with the image file %s' % (image_path))
                 sys.exit(2)
@@ -119,7 +120,7 @@ class ShapeNetDataLoader:
 
             files_of_taxonomy = self.get_files_of_taxonomy(taxonomy_folder_name, samples)
             number_of_files = len(files_of_taxonomy)
-            number_of_files_to_be_selected = round(number_of_files/ratio)
+            number_of_files_to_be_selected = round(number_of_files / ratio)
 
             files.extend(files_of_taxonomy[:number_of_files_to_be_selected])
 
@@ -169,7 +170,8 @@ class ShapeNetDataLoader:
 
 class MVSDataset(torch.utils.data.dataset.Dataset):
     """MVSDataset class used for PyTorch DataLoader"""
-    def __init__(self, dataset_type, file_list, n_views_rendering, transforms=None, target_size=(224,224)):
+
+    def __init__(self, dataset_type, file_list, n_views_rendering, transforms=None, target_size=(224, 224)):
         self.dataset_type = dataset_type
         self.file_list = file_list
         self.transforms = transforms
@@ -209,7 +211,7 @@ class MVSDataset(torch.utils.data.dataset.Dataset):
         for image_path in selected_rendering_image_paths:
             pil_image = Image.open(image_path)
             image_resized = pil_image.resize(self.target_size)
-            rendering_image= np.asarray(image_resized).astype(np.float32) / 255.
+            rendering_image = np.asarray(image_resized).astype(np.float32) / 255.
 
             if len(rendering_image.shape) < 3:
                 logging.error('It seems that there is something wrong with the image file %s' % (image_path))
@@ -286,7 +288,7 @@ class MVSDataLoader:
             rendering_image_indexes = range(total_views)
             rendering_images_file_path = []
             for image_idx in rendering_image_indexes:
-                img_file_path = self.rendering_image_path_template % (sample_number, image_idx+1)
+                img_file_path = self.rendering_image_path_template % (sample_number, image_idx + 1)
                 if not os.path.exists(img_file_path):
                     continue
 
@@ -310,9 +312,9 @@ class MVSDataLoader:
 # /////////////////////////////// = End of MVSDataLoader Class Definition = /////////////////////////////// #
 
 
-
 class MixedDataset(torch.utils.data.dataset.Dataset):
     """MVSDataset class used for PyTorch DataLoader"""
+
     def __init__(self, shapenet_dataset, mvs_dataset):
         self.shapenet_dataset = shapenet_dataset
         self.mvs_dataset = mvs_dataset
@@ -337,7 +339,6 @@ class MixedDataset(torch.utils.data.dataset.Dataset):
 
             return taxonomy_name, sample_name, rendering_images, volume
 
-
     def set_n_views_rendering(self, n_views_rendering):
         self.shapenet_dataset.set_n_views_rendering(n_views_rendering)
         self.mvs_dataset.set_n_views_rendering(n_views_rendering)
@@ -353,7 +354,8 @@ class MixedDataLoader:
         self.shapenet_ratio = cfg.CONST.SHAPENET_RATIO
 
     def get_dataset(self, dataset_type, n_views_rendering, transforms=None):
-        return MixedDataset(self.shapenet_data_loader.get_dataset(dataset_type, n_views_rendering, transforms, ratio=self.shapenet_ratio),
+        return MixedDataset(self.shapenet_data_loader.get_dataset(dataset_type, n_views_rendering, transforms,
+                                                                  ratio=self.shapenet_ratio),
                             self.mvs_data_loader.get_dataset(dataset_type, n_views_rendering, transforms))
 
 

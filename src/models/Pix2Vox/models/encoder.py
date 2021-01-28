@@ -29,7 +29,6 @@ class Encoder(torch.nn.Module):
             print(f"Wrong type of model: {model_type}")
             return
 
-
     def init_pix2vox_f(self):
         # Layer Definition
         vgg16_bn = torchvision.models.vgg16_bn(pretrained=True)
@@ -152,7 +151,6 @@ class Encoder(torch.nn.Module):
 
         image_features = torch.stack(image_features).permute(1, 0, 2, 3, 4).contiguous()
         return image_features
-
 
     def forward_pix2vox_plus_plus(self, rendering_images):
         image_features = []

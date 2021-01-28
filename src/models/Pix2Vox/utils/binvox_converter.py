@@ -7,15 +7,14 @@
 # Please make sure that you have `binvox` installed.
 # You can get it in http://www.patrickmin.com/binvox/
 
-import numpy as np
 import os
 import subprocess
 import sys
-
 from datetime import datetime as dt
 from glob import glob
 
 import binvox_rw
+import numpy as np
 
 
 def main():

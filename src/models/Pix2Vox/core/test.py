@@ -2,26 +2,24 @@
 #
 # Developed by Haozhe Xie <cshzxie@gmail.com>
 
-import json
+import logging
 import subprocess
 import time
 
 import numpy as np
-import logging
 import torch
 import torch.backends.cudnn
 import torch.utils.data
 
+import utils.binvox_rw as br
 import utils.data_loaders
 import utils.data_transforms
 import utils.helpers
-import utils.binvox_rw as br
-
-from models.encoder import Encoder
 from models.decoder import Decoder
+from models.encoder import Encoder
+from models.merger import Merger
 from models.model_types import Pix2VoxTypes
 from models.refiner import Refiner
-from models.merger import Merger
 from settings import VIEWVOX_EXE
 from utils.average_meter import AverageMeter
 from utils.results_saver import save_test_results_to_csv, save_times_to_csv
@@ -150,11 +148,10 @@ def test_net(cfg,
             else:
                 refiner_loss = encoder_loss
 
-
             if path_to_times_csv is not None:
                 end_time = time.time()
                 n_view_list.append(rendering_images.size()[1])
-                times_list.append(end_time-start_time)
+                times_list.append(end_time - start_time)
 
             # Append loss and accuracy to average metrics
             encoder_losses.update(encoder_loss.item())
@@ -180,7 +177,8 @@ def test_net(cfg,
             # Append generated volumes to TensorBoard
             if show_voxels:
                 with open("model.binvox", "wb") as f:
-                    v = br.Voxels(torch.ge(generated_volume, 0.2).float().cpu().numpy()[0], (32, 32, 32), (0, 0, 0), 1, "xyz")
+                    v = br.Voxels(torch.ge(generated_volume, 0.2).float().cpu().numpy()[0], (32, 32, 32), (0, 0, 0), 1,
+                                  "xyz")
                     v.write(f)
 
                 subprocess.run([VIEWVOX_EXE, "model.binvox"])
@@ -190,7 +188,6 @@ def test_net(cfg,
                     v.write(f)
 
                 subprocess.run([VIEWVOX_EXE, "model.binvox"])
-
 
             # Print sample loss and IoU
             logging.info('Test[%d/%d] Taxonomy = %s Sample = %s EDLoss = %.4f RLoss = %.4f IoU = %s' %
@@ -202,14 +199,11 @@ def test_net(cfg,
             if use_refiner:
                 rlosses.append(refiner_loss.item())
 
-
-
     if save_results_to_file:
         save_test_results_to_csv(samples_names, edlosses, rlosses, ious_dict, path_to_csv=results_file_name)
 
     if path_to_times_csv is not None:
         save_times_to_csv(times_list, n_view_list, path_to_csv=path_to_times_csv)
-
 
     # Output testing results
     mean_iou = []
