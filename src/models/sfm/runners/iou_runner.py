@@ -23,7 +23,14 @@ from sfm_utils import get_iou, is_correct_scan_id, read_voxel
     type=bool,
     default=True,
 )
-def main(scan_id_start: int, scan_id_end: int, corrected: bool, maximized: bool):
+@click.option(
+    "-v",
+    "--verbose",
+    "verbose",
+    type=bool,
+    default=True,
+)
+def main(scan_id_start: int, scan_id_end: int, corrected: bool, maximized: bool, verbose: bool) -> np.ndarray:
     click.echo(
         f"\n==============MVS CALCULATE IOU from {scan_id_start} to {scan_id_end}==============="
     )
@@ -36,10 +43,13 @@ def main(scan_id_start: int, scan_id_end: int, corrected: bool, maximized: bool)
             truth = read_voxel(get_mvs_truth_vox_path(scan_id, corrected))
             iou = get_iou(result.data, truth.data)
             ious.append(iou)
-            click.echo(f"IOU {scan_id}: {iou}")
+            if verbose:
+                click.echo(f"IOU {scan_id}: {iou}")
     ious = np.array(ious)
-    click.echo(f"Mean {ious.mean():.2f}")
+    if verbose:
+        click.echo(f"Mean {ious.mean():.2f}")
 
+    return ious
 
 if __name__ == "__main__":
     main()  # pylint: disable=no-value-for-parameter

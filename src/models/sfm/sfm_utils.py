@@ -8,9 +8,6 @@ import utils.binvox_rw as br
 import numpy as np
 
 
-CLOUDCOMPARE_PATH = os.getenv("CLOUD_COMPARE_PATH")
-
-
 def convertPlyToBinvox(cloud: PyntCloud) -> br.Voxels:
     voxelgrid_id = cloud.add_structure("voxelgrid", n_x=32, n_y=32, n_z=32)
     voxelgrid = cloud.structures[voxelgrid_id]
@@ -74,4 +71,4 @@ def read_voxel(voxel_path: str) -> br.Voxels:
         return br.read_as_3d_array(f)
 
 def is_correct_scan_id(scan_id: int) -> bool:
-    return (scan_id >= 1 and scan_id <=77) or (scan_id >= 82 and scan_id <= 84) or (scan_id >= 93 and scan_id <= 128)
+    return (scan_id >= 1 and scan_id <=77) or (scan_id >= 82 and scan_id <= 84) or (scan_id >= 93 and scan_id <= 136)

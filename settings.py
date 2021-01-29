@@ -9,3 +9,5 @@ SHAPENET_DATASET_DIR = os.path.join(DATA_DIR, "ShapeNet")
 
 PROGRAMS_DIR = os.path.join(PROJECT_DIR, "programs")
 VIEWVOX_EXE = os.path.join(PROGRAMS_DIR, "viewvox.exe")
+
+REPORTS_DIR = os.path.join(PROJECT_DIR, "reports")
