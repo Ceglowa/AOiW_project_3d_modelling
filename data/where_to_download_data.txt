@@ -2,8 +2,8 @@ How to configure folders:
 /data/mvs_dataset - main folder for MVS dataset
 /data/mvs_dataset/images - folders with images - https://politechnikawroclawska-my.sharepoint.com/:u:/g/personal/237999_student_pwr_edu_pl/EcjoKIBQuZFMj3PW995Lks8B_aPFMixjCEyJo4mTzQgurw?e=7GI8Nq
 /data/mvs_dataset/images/scan<number_of_model> - folder for images for model <number_of_model>
-/data/mvs_dataset/point_clouds - folder with points clouds for MVS - Files in this folder follow stl001_total<_corrected>.ply format - <LINK IN PREPARATION>
-/data/mvs_dataset/results/scan<number_of_model>/omvs/scene_dense<_corrected>.ply - folder for resulting point clouds should follow this format - <LINK IN PREPARATION>
+/data/mvs_dataset/point_clouds - folder with points clouds for MVS - Files in this folder follow stl001_total<_corrected>.ply format - https://politechnikawroclawska-my.sharepoint.com/:u:/g/personal/238490_student_pwr_edu_pl/EQ6RJ3nAOPhMqroToFJxx1gB0oLqcBUtsV0xl2fUKQ7yLA?e=fBRssn
+/data/mvs_dataset/results/scan<number_of_model>/omvs/scene_dense<_corrected>.ply - folder for resulting point clouds should follow this format - https://politechnikawroclawska-my.sharepoint.com/:u:/g/personal/238490_student_pwr_edu_pl/EfwujHrx3mVDrg4aUgxx5RYBcplCnKVTb8j3DXCPwhDxqw?e=FuaQ9D
 /data/mvs_dataset/processed_voxels_pix2vox - folder with processed 3d models for Pix2Vox model. Files in this folder follow stl001_total_no_ground.binvox format - https://politechnikawroclawska-my.sharepoint.com/:u:/g/personal/237999_student_pwr_edu_pl/Edz_8dUpnLNDm1Rg67iFCeUBi8_9BNy6muO4hL11Iy_kbw?e=yOPtqV
 
 /data/ShapeNet - main folder for ShapeNet dataset
