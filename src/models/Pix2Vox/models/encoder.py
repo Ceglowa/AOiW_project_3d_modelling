@@ -17,13 +17,14 @@ class Encoder(torch.nn.Module):
         self.cfg = cfg
         self.model_type = model_type
 
-        if model_type == Pix2VoxTypes.Pix2Vox_Plus_Plus_A:
+
+        if model_type.value == Pix2VoxTypes.Pix2Vox_Plus_Plus_A.value:
             self.init_pix2vox_plus_plus_a()
-        elif model_type == Pix2VoxTypes.Pix2Vox_Plus_Plus_F:
+        elif model_type.value == Pix2VoxTypes.Pix2Vox_Plus_Plus_F.value:
             self.init_pix2vox_plus_plus_f()
-        elif model_type == Pix2VoxTypes.Pix2Vox_A:
+        elif model_type.value == Pix2VoxTypes.Pix2Vox_A.value:
             self.init_pix2vox_a()
-        elif model_type == Pix2VoxTypes.Pix2Vox_F:
+        elif model_type.value == Pix2VoxTypes.Pix2Vox_F.value:
             self.init_pix2vox_f()
         else:
             print(f"Wrong type of model: {model_type}")
@@ -133,9 +134,9 @@ class Encoder(torch.nn.Module):
         rendering_images = rendering_images.permute(1, 0, 2, 3, 4).contiguous()
         rendering_images = torch.split(rendering_images, 1, dim=0)
 
-        if self.model_type == Pix2VoxTypes.Pix2Vox_Plus_Plus_A or self.model_type == Pix2VoxTypes.Pix2Vox_Plus_Plus_F:
+        if self.model_type.value == Pix2VoxTypes.Pix2Vox_Plus_Plus_A.value or self.model_type.value == Pix2VoxTypes.Pix2Vox_Plus_Plus_F.value:
             return self.forward_pix2vox_plus_plus(rendering_images)
-        elif self.model_type == Pix2VoxTypes.Pix2Vox_A or self.model_type == Pix2VoxTypes.Pix2Vox_F:
+        elif self.model_type.value == Pix2VoxTypes.Pix2Vox_A.value or self.model_type.value == Pix2VoxTypes.Pix2Vox_F.value:
             return self.forward_pix2vox(rendering_images)
         else:
             return
