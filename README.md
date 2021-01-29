@@ -7,16 +7,22 @@ The goal of the project was to tackle the problem of reconstructing 3d models fr
 
 ## How to prepare `data` folder for experiments
 
-For experiments to start, you need to make sure your `data` includes all the necessary data.
-@TODO
+For experiments to start, you need to make sure your `data` includes all the necessary data. In `data` 
+folder there is a file called `where_to_download_data.txt`, which includes all needed links and 
+describes how you should prepare your `data` folder.
+To summarize here how the `data` folder should look like, here is a description:
 
 ```
 ├── data
-│   ├── external       <- Data from third party sources.
-│   ├── interim        <- Intermediate data that has been transformed.
-│   ├── processed      <- The final, canonical data sets for modeling.
-│   └── raw            <- The original, immutable data dump.
-
+│   ├── mvs_dataset       <- MVS data.
+│   │   ├── images        <- Folder for all images of the MVS dataset. They are included in cleaned_images.zip
+│   │   ├── point_clouds  <- @TODO KAcper Tu mają być oryginalne point cloudy i twoje corrected
+│   │   ├── @TODO Kolejne foldery dla SfM
+│   │   ├── processed_voxels_pix2vox <- Folder with processed voxels which are needed for Pix2Vox model. They are stored in processed_voxels_pix2vox.zip
+│   │   ├──
+│   ├── ShapeNet        <- ShapeNet data.
+│   │   ├── ShapeNetRendering <- Images for ShapeNet dataset. Included in ShapeNetRendering.tgz
+│   │   └── ShapeNetVox32     <- Voxels for objects in ShapeNet dataset. Included in ShapeNetVox32.tgz
 ```
 
 
