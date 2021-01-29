@@ -1,0 +1,17 @@
+https://politechnikawroclawska-my.sharepoint.com/:u:/g/personal/237999_student_pwr_edu_pl/EcjoKIBQuZFMj3PW995Lks8B_aPFMixjCEyJo4mTzQgurw?e=7GI8Nq
+https://politechnikawroclawska-my.sharepoint.com/personal/237999_student_pwr_edu_pl/_layouts/15/onedrive.aspx?id=%2Fpersonal%2F237999%5Fstudent%5Fpwr%5Fedu%5Fpl%2FDocuments%2Fprocessed%5Fvoxels%5Fpix2vox%2Ezip&parent=%2Fpersonal%2F237999%5Fstudent%5Fpwr%5Fedu%5Fpl%2FDocuments&originalPath=aHR0cHM6Ly9wb2xpdGVjaG5pa2F3cm9jbGF3c2thLW15LnNoYXJlcG9pbnQuY29tLzp1Oi9nL3BlcnNvbmFsLzIzNzk5OV9zdHVkZW50X3B3cl9lZHVfcGwvRWR6XzhkVXBuTE5EbTFSZzY3aUZDZVVCaThfOUJOeTZtdU80aEwxMUl5X2tidz9ydGltZT11R1BEckdIRTJFZw
+
+http://cvgl.stanford.edu/data2/ShapeNetRendering.tgz
+http://cvgl.stanford.edu/data2/ShapeNetVox32.tgz
+
+How to configure folders:
+/data/mvs_dataset - main folder for MVS dataset
+/data/mvs_dataset/images - folders with images
+/data/mvs_dataset/images/scan<number_of_model> - folder for images for model <number_of_model>
+/data/mvs_dataset/points_clouds - folder with points clouds for MVS - Files in this folder follow stl001_total.ply format
+/data/mvs_dataset/processed_voxels_pix2vox - folder with processed 3d models for Pix2Vox model. Files in this folder follow stl001_total_no_ground.binvox format
+
+
+/data/ShapeNet - main folder for ShapeNet dataset
+/data/ShapeNet/ShapeNetRendering - folder for images for ShapeNet
+/data/ShapeNet/ShapeNetVox32 - folder for voxel models for ShapeNet

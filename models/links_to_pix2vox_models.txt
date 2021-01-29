@@ -1,0 +1,4 @@
+https://gateway.infinitescript.com/?fileName=Pix2Vox-A-ShapeNet.pth - Pix2Vox-A
+https://gateway.infinitescript.com/?fileName=Pix2Vox-F-ShapeNet.pth - Pix2Vox-F
+https://gateway.infinitescript.com/?fileName=Pix2Vox%2B%2B-A-ShapeNet.pth - Pix2Vox++ A
+https://gateway.infinitescript.com/?fileName=Pix2Vox%2B%2B-F-ShapeNet.pth - Pix2Vox++ F
