@@ -21,7 +21,7 @@ __C.DATASETS.SHAPENET.VOXEL_PATH            = 'data/ShapeNet/ShapeNetVox32/%s/%s
 __C.DATASETS.MVS                          = edict()
 __C.DATASETS.MVS.TAXONOMY_FILE_PATH       = 'data/mvs_dataset/MVS_taxonomy_for_training.json'
 __C.DATASETS.MVS.RENDERING_PATH           = 'data/mvs_dataset/images/scan%d/clean_%03d_max.png'
-__C.DATASETS.MVS.VOXEL_PATH               = 'data/mvs_dataset/point_clouds/stl%s_total_no_ground.binvox'
+__C.DATASETS.MVS.VOXEL_PATH               = 'data/mvs_dataset/processed_voxels_pix2vox/stl%s_total_no_ground.binvox'
 #
 # Dataset
 #

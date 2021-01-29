@@ -129,7 +129,7 @@ def test_show_times(path_to_mvs_dataset: str, path_to_outputs: str, path_to_resu
 def run_experiments(run_train: bool, path_to_mvs_dataset: str, path_to_results_dir: str, path_to_models: str, path_to_outputs: str):
     if run_train:
         train_models(path_to_mvs_dataset)
-    # test_models(path_to_mvs_dataset, path_to_models, path_to_outputs, path_to_results_dir)
+    test_models(path_to_mvs_dataset, path_to_models, path_to_outputs, path_to_results_dir)
     show_best_voxels(path_to_mvs_dataset, path_to_outputs)
     test_show_times(path_to_mvs_dataset, path_to_outputs, path_to_results_dir)
 
