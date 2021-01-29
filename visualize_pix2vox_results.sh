@@ -1,0 +1,1 @@
+python ./src/visualization/visualize_pix2vox_results.py -p ./reports/figures/pix2vox_plots -r ./reports/results
