@@ -16,8 +16,8 @@ To summarize here how the `data` folder should look like, here is a description:
 ├── data
 │   ├── mvs_dataset       <- MVS data.
 │   │   ├── images        <- Folder for all images of the MVS dataset. They are included in cleaned_images.zip
-│   │   ├── point_clouds  <- @TODO KAcper Tu mają być oryginalne point cloudy i twoje corrected
-│   │   ├── @TODO Kolejne foldery dla SfM
+│   │   ├── point_clouds  <- folder with original and manually corrected ground truths
+│   │   ├── results  <- optional downloadable folder with reconstructed models (contains originals and models after correction)
 │   │   ├── processed_voxels_pix2vox <- Folder with processed voxels which are needed for Pix2Vox model. They are stored in processed_voxels_pix2vox.zip
 │   │   ├──
 │   ├── ShapeNet        <- ShapeNet data.
@@ -27,6 +27,11 @@ To summarize here how the `data` folder should look like, here is a description:
 
 
 ## How to run experiments for `Structure From Motion`
+Having PYTHONPATH set to the root of the project as well as to the ./src/models/sfm is necessary. Also Docker is required (only for reconstruction). To run all expriments and generate results for SfM on MVS dataset, simply run the following command from the root of the project:
+```sh
+python .\src\models\sfm\all_runner.py 1 128 -r False -c False
+```
+This command assumes, that you use already reconstructed and corrected models. If you also want to run reconstruction by yourself, change False to True in -r option. The same applies to correction (-c option), but additionally you are required to pass path to CloudCompare.exe (-p option) - that's the program used for semi-automatic allignment and cleaning of ground_truth and resulting point clouds. I recommend to download already prepared models, to see how the correction should be carried out.
 
 ## How to run experiments for `Pix2Vox`
 
