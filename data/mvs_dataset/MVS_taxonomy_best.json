@@ -1,0 +1,11 @@
+[
+  {
+    "taxonomy_id": "images",
+    "taxonomy_name": "images",
+    "test": [
+      "scan56",
+      "scan3",
+      "scan66"
+    ]
+  }
+]

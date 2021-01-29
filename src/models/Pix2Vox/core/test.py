@@ -2,35 +2,43 @@
 #
 # Developed by Haozhe Xie <cshzxie@gmail.com>
 
-import json
-import numpy as np
 import logging
+import subprocess
+import time
+
+import numpy as np
 import torch
 import torch.backends.cudnn
 import torch.utils.data
 
+import utils.binvox_rw as br
 import utils.data_loaders
 import utils.data_transforms
 import utils.helpers
-
-from models.encoder import Encoder
 from models.decoder import Decoder
+from models.encoder import Encoder
+from models.merger import Merger
 from models.model_types import Pix2VoxTypes
 from models.refiner import Refiner
-from models.merger import Merger
+from settings import VIEWVOX_EXE
 from utils.average_meter import AverageMeter
+from utils.results_saver import save_test_results_to_csv, save_times_to_csv
 
 
 def test_net(cfg,
              model_type,
              dataset_type,
+             results_file_name,
              epoch_idx=-1,
              test_data_loader=None,
              test_writer=None,
              encoder=None,
              decoder=None,
              refiner=None,
-             merger=None):
+             merger=None,
+             save_results_to_file=False,
+             show_voxels=False,
+             path_to_times_csv=None):
     if model_type == Pix2VoxTypes.Pix2Vox_A or model_type == Pix2VoxTypes.Pix2Vox_Plus_Plus_A:
         use_refiner = True
     else:
@@ -38,12 +46,6 @@ def test_net(cfg,
 
     # Enable the inbuilt cudnn auto-tuner to find the best algorithm to use
     torch.backends.cudnn.benchmark = True
-
-    # Load taxonomies of dataset
-    taxonomies = []
-    with open(cfg.DATASETS[cfg.DATASET.TEST_DATASET.upper()].TAXONOMY_FILE_PATH, encoding='utf-8') as file:
-        taxonomies = json.loads(file.read())
-    taxonomies = {t['taxonomy_id']: t for t in taxonomies}
 
     # Set up data loader
     if test_data_loader is None:
@@ -108,14 +110,27 @@ def test_net(cfg,
         refiner.eval()
     merger.eval()
 
+    samples_names = []
+    edlosses = []
+    rlosses = []
+    ious_dict = {}
+    for iou_threshold in cfg.TEST.VOXEL_THRESH:
+        ious_dict[iou_threshold] = []
+
+    if path_to_times_csv is not None:
+        n_view_list = []
+        times_list = []
+
     for sample_idx, (taxonomy_id, sample_name, rendering_images, ground_truth_volume) in enumerate(test_data_loader):
         taxonomy_id = taxonomy_id[0] if isinstance(taxonomy_id[0], str) else taxonomy_id[0].item()
         sample_name = sample_name[0]
-
         with torch.no_grad():
             # Get data from data loader
             rendering_images = utils.helpers.var_or_cuda(rendering_images)
             ground_truth_volume = utils.helpers.var_or_cuda(ground_truth_volume)
+
+            if path_to_times_csv is not None:
+                start_time = time.time()
 
             # Test the encoder, decoder, refiner and merger
             image_features = encoder(rendering_images)
@@ -133,6 +148,11 @@ def test_net(cfg,
             else:
                 refiner_loss = encoder_loss
 
+            if path_to_times_csv is not None:
+                end_time = time.time()
+                n_view_list.append(rendering_images.size()[1])
+                times_list.append(end_time - start_time)
+
             # Append loss and accuracy to average metrics
             encoder_losses.update(encoder_loss.item())
             if use_refiner:
@@ -146,6 +166,8 @@ def test_net(cfg,
                 union = torch.sum(torch.ge(_volume.add(ground_truth_volume), 1)).float()
                 sample_iou.append((intersection / union).item())
 
+                ious_dict[th].append((intersection / union).item())
+
             # IoU per taxonomy
             if taxonomy_id not in test_iou:
                 test_iou[taxonomy_id] = {'n_samples': 0, 'iou': []}
@@ -153,17 +175,35 @@ def test_net(cfg,
             test_iou[taxonomy_id]['iou'].append(sample_iou)
 
             # Append generated volumes to TensorBoard
-            if test_writer and (np.mean(sample_iou) > 0.95 or np.mean(sample_iou)<0.30):
-                # Volume Visualization
-                rendering_views = utils.helpers.get_volume_views(generated_volume.cpu().numpy())
-                test_writer.add_image(f'Model%02d/Reconstructed_Mean_IoU_{np.mean(sample_iou)}' % sample_idx, rendering_views, epoch_idx)
-                rendering_views = utils.helpers.get_volume_views(ground_truth_volume.cpu().numpy())
-                test_writer.add_image(f'Model%02d/GroundTruth_Mean_IoU_{np.mean(sample_iou)}' % sample_idx, rendering_views, epoch_idx)
+            if show_voxels:
+                with open("model.binvox", "wb") as f:
+                    v = br.Voxels(torch.ge(generated_volume, 0.2).float().cpu().numpy()[0], (32, 32, 32), (0, 0, 0), 1,
+                                  "xyz")
+                    v.write(f)
+
+                subprocess.run([VIEWVOX_EXE, "model.binvox"])
+
+                with open("model.binvox", "wb") as f:
+                    v = br.Voxels(ground_truth_volume.cpu().numpy()[0], (32, 32, 32), (0, 0, 0), 1, "xyz")
+                    v.write(f)
+
+                subprocess.run([VIEWVOX_EXE, "model.binvox"])
 
             # Print sample loss and IoU
             logging.info('Test[%d/%d] Taxonomy = %s Sample = %s EDLoss = %.4f RLoss = %.4f IoU = %s' %
                          (sample_idx + 1, n_samples, taxonomy_id, sample_name, encoder_loss.item(),
                           refiner_loss.item(), ['%.4f' % si for si in sample_iou]))
+
+            samples_names.append(sample_name)
+            edlosses.append(encoder_loss.item())
+            if use_refiner:
+                rlosses.append(refiner_loss.item())
+
+    if save_results_to_file:
+        save_test_results_to_csv(samples_names, edlosses, rlosses, ious_dict, path_to_csv=results_file_name)
+
+    if path_to_times_csv is not None:
+        save_times_to_csv(times_list, n_view_list, path_to_csv=path_to_times_csv)
 
     # Output testing results
     mean_iou = []
@@ -180,18 +220,6 @@ def test_net(cfg,
     for th in cfg.TEST.VOXEL_THRESH:
         print('t=%.2f' % th, end='\t')
     print()
-    # Print body
-    for taxonomy_id in test_iou:
-        print('%s' % taxonomies[taxonomy_id]['taxonomy_name'].ljust(8), end='\t')
-        print('%d' % test_iou[taxonomy_id]['n_samples'], end='\t')
-        if 'baseline' in taxonomies[taxonomy_id]:
-            print('%.4f' % taxonomies[taxonomy_id]['baseline']['%d-view' % cfg.CONST.N_VIEWS_RENDERING], end='\t\t')
-        else:
-            print('N/a', end='\t\t')
-
-        for ti in test_iou[taxonomy_id]['iou']:
-            print('%.4f' % ti, end='\t')
-        print()
     # Print mean IoU for each threshold
     print('Overall ', end='\t\t\t\t')
     for mi in mean_iou:
@@ -207,4 +235,3 @@ def test_net(cfg,
             test_writer.add_scalar('Refiner/IoU', max_iou, epoch_idx)
 
     return max_iou
-

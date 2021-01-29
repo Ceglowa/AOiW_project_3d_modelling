@@ -2,28 +2,28 @@
 #
 # Developed by Haozhe Xie <cshzxie@gmail.com>
 
-import os
 import logging
+import os
 import random
+from datetime import datetime as dt
+from time import time
+
 import torch
 import torch.backends.cudnn
 import torch.utils.data
+from tensorboardX import SummaryWriter
 
 import utils.data_loaders
 import utils.data_transforms
 import utils.helpers
-
-from datetime import datetime as dt
-from tensorboardX import SummaryWriter
-from time import time
-
 from core.test import test_net
-from models.encoder import Encoder
 from models.decoder import Decoder
+from models.encoder import Encoder
+from models.merger import Merger
 from models.model_types import Pix2VoxTypes
 from models.refiner import Refiner
-from models.merger import Merger
 from utils.average_meter import AverageMeter
+from utils.data_loaders import DatasetType
 
 
 def train_net(cfg, model_type):
@@ -169,8 +169,8 @@ def train_net(cfg, model_type):
 
     # Summary writer for TensorBoard
     output_dir = os.path.join(cfg.DIR.OUT_PATH, '%s')
-    cfg.DIR.LOGS = output_dir % 'logs'
-    cfg.DIR.CHECKPOINTS = output_dir % 'checkpoints'
+    cfg.DIR.LOGS = output_dir % f'logs_{model_type}_{cfg.DATASET.TRAIN_DATASET}_{cfg.CONST.SHAPENET_RATIO}'
+    cfg.DIR.CHECKPOINTS = output_dir % f'checkpoints_{model_type}_{cfg.DATASET.TRAIN_DATASET}_{cfg.CONST.SHAPENET_RATIO}'
     train_writer = SummaryWriter(os.path.join(cfg.DIR.LOGS, 'train'))
     val_writer = SummaryWriter(os.path.join(cfg.DIR.LOGS, 'test'))
 
@@ -271,9 +271,13 @@ def train_net(cfg, model_type):
 
         # Tick / tock
         epoch_end_time = time()
-        logging.info('[Epoch %d/%d] EpochTime = %.3f (s) EDLoss = %.4f RLoss = %.4f' %
-                     (epoch_idx + 1, cfg.TRAIN.NUM_EPOCHS, epoch_end_time - epoch_start_time, encoder_losses.avg,
-                      refiner_losses.avg))
+        if use_refiner:
+            logging.info('[Epoch %d/%d] EpochTime = %.3f (s) EDLoss = %.4f RLoss = %.4f' %
+                         (epoch_idx + 1, cfg.TRAIN.NUM_EPOCHS, epoch_end_time - epoch_start_time, encoder_losses.avg,
+                          refiner_losses.avg))
+        else:
+            logging.info('[Epoch %d/%d] EpochTime = %.3f (s) EDLoss = %.4f' %
+                         (epoch_idx + 1, cfg.TRAIN.NUM_EPOCHS, epoch_end_time - epoch_start_time, encoder_losses.avg))
 
         # Update Rendering Views
         if cfg.TRAIN.UPDATE_N_VIEWS_RENDERING:
@@ -283,8 +287,13 @@ def train_net(cfg, model_type):
                          (epoch_idx + 2, cfg.TRAIN.NUM_EPOCHS, n_views_rendering))
 
         # Validate the training models
-        iou = test_net(cfg, model_type, epoch_idx + 1, val_data_loader, val_writer, encoder, decoder, refiner, merger)
-
+        if use_refiner:
+            iou = test_net(cfg, model_type, DatasetType.VAL, epoch_idx + 1, val_data_loader, val_writer, encoder,
+                           decoder, refiner, merger)
+        else:
+            iou = test_net(cfg, model_type, DatasetType.VAL, epoch_idx + 1, val_data_loader, val_writer, encoder,
+                           decoder, refiner=None,
+                           merger=merger)
         # Save weights to file
         if (epoch_idx + 1) % cfg.TRAIN.SAVE_FREQ == 0 or iou > best_iou:
             file_name = 'checkpoint-epoch-%03d.pth' % (epoch_idx + 1)

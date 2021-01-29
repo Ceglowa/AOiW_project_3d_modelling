@@ -30,7 +30,7 @@ def get_mvs_result_vox_path(scan_id: int, corrected: bool, maximized: bool = Fal
 
 
 def get_mvs_truth_ply_path(scan_id: int, corrected: bool):
-    return os.path.join(MVS_DATASET_DIR, "points_clouds", f"stl{scan_id:03d}_total{'_corrected' if corrected else ''}.ply")
+    return os.path.join(MVS_DATASET_DIR, "point_clouds", f"stl{scan_id:03d}_total{'_corrected' if corrected else ''}.ply")
 
 
 def get_mvs_truth_vox_path(scan_id: int, corrected: bool):

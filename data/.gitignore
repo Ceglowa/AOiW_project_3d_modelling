@@ -2,9 +2,8 @@ ShapeNet/ShapeNetRendering
 ShapeNet/ShapeNetVox32
 ShapeNet/results
 
-mvs_dataset/calibration
 mvs_dataset/images
-mvs_dataset/points_clouds
-mvs_dataset/sample_set
+mvs_dataset/point_clouds
+mvs_dataset/processed_voxels_pix2vox
 mvs_dataset/results
 mvs_dataset/voxels

@@ -13,9 +13,9 @@ class Merger(torch.nn.Module):
         self.cfg = cfg
         self.model_type = model_type
 
-        if model_type == Pix2VoxTypes.Pix2Vox_Plus_Plus_A or model_type == Pix2VoxTypes.Pix2Vox_Plus_Plus_F:
+        if model_type.value == Pix2VoxTypes.Pix2Vox_Plus_Plus_A.value or model_type.value == Pix2VoxTypes.Pix2Vox_Plus_Plus_F.value:
             self.init_pix2vox_plus_plus()
-        elif model_type == Pix2VoxTypes.Pix2Vox_A or model_type == Pix2VoxTypes.Pix2Vox_F:
+        elif model_type.value == Pix2VoxTypes.Pix2Vox_A.value or model_type.value == Pix2VoxTypes.Pix2Vox_F.value:
             self.init_pix2vox()
         else:
             print(f"Wrong type of model: {model_type}")
@@ -86,9 +86,9 @@ class Merger(torch.nn.Module):
         n_views_rendering = coarse_volumes.size(1)
         raw_features = torch.split(raw_features, 1, dim=1)
 
-        if self.model_type == Pix2VoxTypes.Pix2Vox_Plus_Plus_A or self.model_type == Pix2VoxTypes.Pix2Vox_Plus_Plus_F:
+        if self.model_type.value == Pix2VoxTypes.Pix2Vox_Plus_Plus_A.value or self.model_type.value == Pix2VoxTypes.Pix2Vox_Plus_Plus_F.value:
             return self.forward_pix2vox_plus_plus(n_views_rendering, raw_features, coarse_volumes)
-        elif self.model_type == Pix2VoxTypes.Pix2Vox_A or self.model_type == Pix2VoxTypes.Pix2Vox_F:
+        elif self.model_type.value == Pix2VoxTypes.Pix2Vox_A.value or self.model_type.value == Pix2VoxTypes.Pix2Vox_F.value:
             return self.forward_pix2vox(n_views_rendering, raw_features, coarse_volumes)
         else:
             return

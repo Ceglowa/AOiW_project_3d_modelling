@@ -13,13 +13,13 @@ class Decoder(torch.nn.Module):
         self.cfg = cfg
         self.model_type = model_type
 
-        if model_type == Pix2VoxTypes.Pix2Vox_Plus_Plus_A:
+        if model_type.value == Pix2VoxTypes.Pix2Vox_Plus_Plus_A.value:
             self.init_pix2vox_plus_plus_a()
-        elif model_type == Pix2VoxTypes.Pix2Vox_Plus_Plus_F:
+        elif model_type.value == Pix2VoxTypes.Pix2Vox_Plus_Plus_F.value:
             self.init_pix2vox_plus_plus_f()
-        elif model_type == Pix2VoxTypes.Pix2Vox_A:
+        elif model_type.value == Pix2VoxTypes.Pix2Vox_A.value:
             self.init_pix2vox_a()
-        elif model_type == Pix2VoxTypes.Pix2Vox_F:
+        elif model_type.value == Pix2VoxTypes.Pix2Vox_F.value:
             self.init_pix2vox_f()
         else:
             print(f"Wrong type of model: {model_type}")
@@ -56,12 +56,14 @@ class Decoder(torch.nn.Module):
     def init_pix2vox_a(self):
         # Layer Definition
         self.layer1 = torch.nn.Sequential(
-            torch.nn.ConvTranspose3d(2048, 512, kernel_size=4, stride=2, bias=self.cfg.NETWORK.TCONV_USE_BIAS, padding=1),
+            torch.nn.ConvTranspose3d(2048, 512, kernel_size=4, stride=2, bias=self.cfg.NETWORK.TCONV_USE_BIAS,
+                                     padding=1),
             torch.nn.BatchNorm3d(512),
             torch.nn.ReLU()
         )
         self.layer2 = torch.nn.Sequential(
-            torch.nn.ConvTranspose3d(512, 128, kernel_size=4, stride=2, bias=self.cfg.NETWORK.TCONV_USE_BIAS, padding=1),
+            torch.nn.ConvTranspose3d(512, 128, kernel_size=4, stride=2, bias=self.cfg.NETWORK.TCONV_USE_BIAS,
+                                     padding=1),
             torch.nn.BatchNorm3d(128),
             torch.nn.ReLU()
         )
@@ -79,7 +81,6 @@ class Decoder(torch.nn.Module):
             torch.nn.ConvTranspose3d(8, 1, kernel_size=1, bias=self.cfg.NETWORK.TCONV_USE_BIAS),
             torch.nn.Sigmoid()
         )
-
 
     def init_pix2vox_plus_plus_a(self):
         # Layer Definition
@@ -113,7 +114,8 @@ class Decoder(torch.nn.Module):
     def init_pix2vox_plus_plus_f(self):
         # Layer Definition
         self.layer1 = torch.nn.Sequential(
-            torch.nn.ConvTranspose3d(392, 128, kernel_size=4, stride=2, bias=self.cfg.NETWORK.TCONV_USE_BIAS, padding=1),
+            torch.nn.ConvTranspose3d(392, 128, kernel_size=4, stride=2, bias=self.cfg.NETWORK.TCONV_USE_BIAS,
+                                     padding=1),
             torch.nn.BatchNorm3d(128),
             torch.nn.ReLU()
         )
@@ -141,13 +143,13 @@ class Decoder(torch.nn.Module):
         image_features = image_features.permute(1, 0, 2, 3, 4).contiguous()
         image_features = torch.split(image_features, 1, dim=0)
 
-        if self.model_type == Pix2VoxTypes.Pix2Vox_Plus_Plus_A:
+        if self.model_type.value == Pix2VoxTypes.Pix2Vox_Plus_Plus_A.value:
             return self.forward_pix2vox_plus_plus_a(image_features)
-        elif self.model_type == Pix2VoxTypes.Pix2Vox_Plus_Plus_F:
+        elif self.model_type.value == Pix2VoxTypes.Pix2Vox_Plus_Plus_F.value:
             return self.forward_pix2vox_plus_plus_f(image_features)
-        elif self.model_type == Pix2VoxTypes.Pix2Vox_A:
+        elif self.model_type.value == Pix2VoxTypes.Pix2Vox_A.value:
             return self.forward_pix2vox_a(image_features)
-        elif self.model_type == Pix2VoxTypes.Pix2Vox_F:
+        elif self.model_type.value == Pix2VoxTypes.Pix2Vox_F.value:
             return self.forward_pix2vox_f(image_features)
         else:
             return
@@ -263,4 +265,3 @@ class Decoder(torch.nn.Module):
         # print(gen_volumes.size())      # torch.Size([batch_size, n_views, 32, 32, 32])
         # print(raw_features.size())      # torch.Size([batch_size, n_views, 9, 32, 32, 32])
         return raw_features, gen_volumes
-

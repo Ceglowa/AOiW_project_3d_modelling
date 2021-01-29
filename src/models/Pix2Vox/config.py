@@ -11,7 +11,6 @@ cfg                                         = __C
 # Dataset Config
 #
 
-
 __C.DATASETS                                = edict()
 __C.DATASETS.SHAPENET                       = edict()
 __C.DATASETS.SHAPENET.TAXONOMY_FILE_PATH    = 'data/ShapeNet/ShapeNet_taxonomy.json'
@@ -20,19 +19,17 @@ __C.DATASETS.SHAPENET.VOXEL_PATH            = 'data/ShapeNet/ShapeNetVox32/%s/%s
 
 
 __C.DATASETS.MVS                          = edict()
-__C.DATASETS.MVS.TAXONOMY_FILE_PATH       = 'data/MVS.json'
-__C.DATASETS.MVS.ANNOTATION_PATH          = 'data/mvs_dataset/pix3d.json'
-__C.DATASETS.MVS.RENDERING_PATH           = 'data/mvs_dataset/images/scan%03d/clean_%s_max.png'
-__C.DATASETS.MVS.VOXEL_PATH               = 'data/mvs_dataset/model/%s/%s/%s.binvox'
+__C.DATASETS.MVS.TAXONOMY_FILE_PATH       = 'data/mvs_dataset/MVS_taxonomy_for_training.json'
+__C.DATASETS.MVS.RENDERING_PATH           = 'data/mvs_dataset/images/scan%d/clean_%03d_max.png'
+__C.DATASETS.MVS.VOXEL_PATH               = 'data/mvs_dataset/processed_voxels_pix2vox/stl%s_total_no_ground.binvox'
 #
 # Dataset
 #
 __C.DATASET                                 = edict()
 __C.DATASET.MEAN                            = [0.5, 0.5, 0.5]
 __C.DATASET.STD                             = [0.5, 0.5, 0.5]
-__C.DATASET.TRAIN_DATASET                   = 'ShapeNet'
-__C.DATASET.TEST_DATASET                    = 'ShapeNet'
-# __C.DATASET.TEST_DATASET                  = 'MVS'
+__C.DATASET.TRAIN_DATASET                   = 'Mixed'
+__C.DATASET.TEST_DATASET                    = 'Mixed'
 
 #
 # Common
@@ -42,18 +39,18 @@ __C.CONST.DEVICE                            = '0'
 __C.CONST.RNG_SEED                          = 0
 __C.CONST.IMG_W                             = 224       # Image width for input
 __C.CONST.IMG_H                             = 224       # Image height for input
-__C.CONST.BATCH_SIZE                        = 32
+__C.CONST.BATCH_SIZE                        = 8
 __C.CONST.N_VIEWS_RENDERING                 = 1         # Dummy property for Pascal 3D
 __C.CONST.CROP_IMG_W                        = 128       # Dummy property for Pascal 3D
 __C.CONST.CROP_IMG_H                        = 128       # Dummy property for Pascal 3D
 __C.CONST.NUM_WORKER                        = 4         # number of data workers
+__C.CONST.SHAPENET_RATIO                    = 10
 
 #
 # Directories
 #
 __C.DIR                                     = edict()
 __C.DIR.OUT_PATH                            = 'output'
-__C.DIR.RANDOM_BG_PATH                      = '/home/hzxie/Datasets/SUN2012/JPEGImages'
 
 #
 # Network
@@ -69,7 +66,7 @@ __C.NETWORK.USE_MERGER                      = True
 #
 __C.TRAIN                                   = edict()
 __C.TRAIN.RESUME_TRAIN                      = False
-__C.TRAIN.NUM_EPOCHS                        = 250
+__C.TRAIN.NUM_EPOCHS                        = 100
 __C.TRAIN.BRIGHTNESS                        = .4
 __C.TRAIN.CONTRAST                          = .4
 __C.TRAIN.SATURATION                        = .4

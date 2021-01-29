@@ -4,12 +4,13 @@
 # References:
 # - https://github.com/xiumingzhang/GenRe-ShapeHD
 
+import os
+import random
+
 import cv2
 # import matplotlib.pyplot as plt
 # import matplotlib.patches as patches
 import numpy as np
-import os
-import random
 import torch
 
 
@@ -21,6 +22,7 @@ class Compose(object):
     >>>     transforms.CenterCrop(127, 127, 3),
     >>>  ])
     """
+
     def __init__(self, transforms):
         self.transforms = transforms
 
@@ -39,6 +41,7 @@ class ToTensor(object):
     Convert a PIL Image or numpy.ndarray to tensor.
     Converts a PIL Image or numpy.ndarray (H x W x C) in the range [0, 255] to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0].
     """
+
     def __call__(self, rendering_images):
         assert (isinstance(rendering_images, np.ndarray))
         array = np.transpose(rendering_images, (0, 3, 1, 2))
@@ -281,8 +284,8 @@ class ColorJitter(object):
 
         # Randomize the order of changing brightness, contrast, and saturation
         attr_names = ['brightness', 'contrast', 'saturation']
-        attr_values = [brightness, contrast, saturation]    # The value of changing attrs
-        attr_indexes = np.array(range(len(attr_names)))    # The order of changing attrs
+        attr_values = [brightness, contrast, saturation]  # The value of changing attrs
+        attr_indexes = np.array(range(len(attr_names)))  # The order of changing attrs
         np.random.shuffle(attr_indexes)
 
         for img_idx, img in enumerate(rendering_images):
@@ -393,11 +396,11 @@ class RandomNoise(object):
         processed_images = np.empty(shape=(0, img_height, img_width, img_channels))
 
         for img_idx, img in enumerate(rendering_images):
-            processed_image = img[:, :, ::-1]    # BGR -> RGB
+            processed_image = img[:, :, ::-1]  # BGR -> RGB
             for i in range(img_channels):
                 processed_image[:, :, i] += noise_rgb[i]
 
-            processed_image = processed_image[:, :, ::-1]    # RGB -> BGR
+            processed_image = processed_image[:, :, ::-1]  # RGB -> BGR
             processed_images = np.append(processed_images, [processed_image], axis=0)
             # from copy import deepcopy
             # ori_img = deepcopy(img)
